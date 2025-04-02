@@ -1,8 +1,8 @@
 {
-  "name": "translate-ai",
-  "displayName": "Translate ai",
+  "name": "tool-plugin",
+  "displayName": "tool-plugin",
   "version": "0.0.1",
-  "description": "-AI翻译",
+  "description": "开发小工具",
   "author": "kanghuhui",
   "scripts": {
     "dev": "plasmo dev",
@@ -10,6 +10,10 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.7.1",
+    "@plasmohq/storage": "^1.15.0",
+    "antd": "^5.24.6",
+    "antd-mobile": "^5.39.0",
     "plasmo": "0.90.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
