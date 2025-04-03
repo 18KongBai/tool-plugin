@@ -51,12 +51,14 @@ window.addEventListener("message", (event) => {
     }
   }
   if (event.data.type === "setToken") {
-    if (window._jn._updateToken) {
+    try {
       window._jn._updateToken(event.data.data)
       showToast("设置token成功")
       setTimeout(() => {
         window.location.reload()
       }, 1000)
+    } catch (error) {
+      showToast(`设置token失败:${error}`, { type: "error" })
     }
   }
   if (event.data.type === "executeScript") {

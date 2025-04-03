@@ -20,11 +20,7 @@ function IndexPopup() {
 
   return (
     <div className={styles.container}>
-      <Collapse
-        items={items}
-        defaultActiveKey={["1", "2"]}
-        onChange={onChange}
-      />
+      <Collapse items={items} defaultActiveKey={["1", "2"]} />
     </div>
   )
 }
