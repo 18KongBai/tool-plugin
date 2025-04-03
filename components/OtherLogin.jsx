@@ -31,7 +31,7 @@ export default function OtherLogin() {
     (value) => value || { otherList: [] }
   )
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [showDataList, setShowDataList] = useState(false)
+  const [showDataList, setShowDataList] = useState(true)
   const [activeKeys, setActiveKeys] = useState(["1"])
   const [editingScript, setEditingScript] = useState(null)
   const [searchText, setSearchText] = useState("")

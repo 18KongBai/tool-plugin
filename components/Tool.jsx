@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
 
-import { sendMessage, sendMessageToContent } from "../utils"
+import { sendMessageToContent } from "../utils"
 
 export default function Tool() {
   const [config, setConfig] = useStorage("config", (value) => value || {})
@@ -35,7 +35,7 @@ export default function Tool() {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
-          initialValues={{ environment: config.environment || 1 }}
+          initialValues={{ environment: config.environment }}
           onValuesChange={onValuesChange}
           style={{ maxWidth: 600 }}>
           <Form.Item label="环境切换" name="environment">
@@ -45,7 +45,7 @@ export default function Tool() {
               <Radio value="OTHER">其他</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="token设置" name="environment">
+          <Form.Item label="token设置">
             <Flex gap="small" wrap>
               {/* 事件都发送到隔离世界脚本 */}
               <Button

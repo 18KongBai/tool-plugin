@@ -5,12 +5,6 @@ import Tool from "../components/Tool"
 import styles from "./popup.module.css"
 
 function IndexPopup() {
-  const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`
-
   const items = [
     {
       key: "1",
@@ -23,10 +17,6 @@ function IndexPopup() {
       children: <QuickLogin />
     }
   ]
-
-  const onChange = (key) => {
-    console.log(key)
-  }
 
   return (
     <div className={styles.container}>
