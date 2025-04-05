@@ -13,6 +13,7 @@ import {
   message,
   Modal,
   Space,
+  Switch,
   Table,
   Typography
 } from "antd"
@@ -146,7 +147,9 @@ export default function OtherLogin() {
       // 编辑模式，设置表单初始值
       form.setFieldsValue({
         name: script.name,
-        code: script.code
+        code: script.code,
+        autoRun: script.autoRun || false,
+        autoRunCondition: script.autoRunCondition || ""
       })
     } else {
       // 添加模式，重置表单
@@ -185,7 +188,8 @@ export default function OtherLogin() {
     const otherList = config.otherList || []
     const newScript = {
       ...values,
-      key: `script-${Date.now()}`
+      key: `script-${Date.now()}`,
+      autoRun: values.autoRun || false
     }
 
     setConfig({
@@ -255,6 +259,22 @@ export default function OtherLogin() {
     setActiveKeys(keys)
   }
 
+  // 处理自动运行切换
+  const handleAutoRunChange = (key, checked) => {
+    const otherList = config.otherList || []
+    const newList = otherList.map((item) => {
+      if (item.key === key) {
+        return { ...item, autoRun: checked }
+      }
+      return item
+    })
+
+    setConfig({
+      ...config,
+      otherList: newList
+    })
+  }
+
   // 渲染表格
   const renderTable = () => {
     return (
@@ -275,28 +295,78 @@ export default function OtherLogin() {
       title: "脚本名称",
       dataIndex: "name",
       key: "name",
-      width: 150,
-      ellipsis: true,
-      ...getColumnSearchProps("name"),
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      sortDirections: ["ascend", "descend"]
-    },
-    {
-      title: "脚本代码",
-      dataIndex: "code",
-      key: "code",
       width: 100,
       ellipsis: true,
-      render: (text) => (
-        <Text ellipsis={{ tooltip: text }} style={{ width: "100%" }}>
-          {text}
-        </Text>
+      ...getColumnSearchProps("name")
+    },
+    {
+      title: "自动运行",
+      dataIndex: "autoRun",
+      key: "autoRun",
+      width: 100,
+      render: (text, record) => (
+        <Switch
+          checked={!!text}
+          onChange={(checked) => handleAutoRunChange(record.key, checked)}
+        />
       )
+    },
+    {
+      title: "运行条件",
+      dataIndex: "autoRunCondition",
+      key: "autoRunCondition",
+      width: 200,
+      render: (text) => {
+        if (!text) return <span>无</span>
+
+        // 将多行内容转换为逗号分隔的形式显示
+        const conditions = text.split("\n").filter((line) => line.trim() !== "")
+
+        if (conditions.length === 0) {
+          return <span>无</span>
+        }
+
+        // 显示为链接列表
+        return (
+          <div style={{ width: "100%" }}>
+            {conditions.map((condition, index) => {
+              // 构造完整URL (如果不是完整URL则加上https://)
+              const fullUrl = condition.startsWith("http")
+                ? condition
+                : `https://${condition}`
+
+              return (
+                <div
+                  key={index}
+                  style={{
+                    marginBottom: 8,
+                    display: "flex",
+                    alignItems: "center"
+                  }}>
+                  <span style={{ marginRight: 4, fontSize: 10 }}>•</span>
+                  <a
+                    href={fullUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                    title={condition}>
+                    {condition}
+                  </a>
+                </div>
+              )
+            })}
+          </div>
+        )
+      }
     },
     {
       title: "操作",
       key: "action",
-      width: 180,
       fixed: "right",
       render: (_, record) => (
         <Space size="middle">
@@ -382,6 +452,18 @@ export default function OtherLogin() {
             label="脚本名称"
             rules={[{ required: true, message: "请输入脚本名称" }]}>
             <Input placeholder="请输入脚本名称" />
+          </Form.Item>
+          <Form.Item name="autoRun" label="自动运行" valuePropName="checked">
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="autoRunCondition"
+            label="自动运行条件（URL包含指定内容时运行）"
+            tooltip="当页面URL包含此内容时自动运行脚本，留空则在所有页面运行。多个条件请每行输入一个，满足任一条件即可运行。">
+            <TextArea
+              placeholder="例如：github.com/login&#10;example.com/dashboard&#10;每行输入一个URL条件，满足任一条件即可运行"
+              autoSize={{ minRows: 2, maxRows: 6 }}
+            />
           </Form.Item>
           <Form.Item
             name="code"

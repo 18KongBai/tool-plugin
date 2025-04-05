@@ -7,13 +7,12 @@ import {
   message,
   Modal,
   Space,
+  Switch,
   Table
 } from "antd"
 import React, { useRef, useState } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
-
-import { sendMessageToContent } from "../utils"
 
 export default function CodeDesign() {
   const [config, setConfig] = useStorage(
@@ -137,7 +136,8 @@ export default function CodeDesign() {
       form.setFieldsValue({
         name: record.name,
         link: record.link,
-        password: record.password || ""
+        password: record.password || "",
+        autoRun: record.autoRun || false
       })
     } else {
       // 添加模式，重置表单
@@ -224,10 +224,19 @@ export default function CodeDesign() {
     })
   }
 
-  const loginCodeDesign = () => {
-    console.log("登录")
-    sendMessageToContent({
-      type: "codeDesignLogin"
+  // 处理自动运行切换
+  const handleAutoRunChange = (key, checked) => {
+    const codeList = config.codeList || []
+    const newList = codeList.map((item) => {
+      if (item.key === key) {
+        return { ...item, autoRun: checked }
+      }
+      return item
+    })
+
+    setConfig({
+      ...config,
+      codeList: newList
     })
   }
 
@@ -244,61 +253,13 @@ export default function CodeDesign() {
   // 渲染表格
   const renderTable = () => {
     return (
-      <>
-        <Button
-          onClick={() => showModal()}
-          type="primary"
-          style={{
-            marginBottom: 16
-          }}>
-          新增项目
-        </Button>
-
-        <Table
-          columns={columns}
-          dataSource={config?.codeList || []}
-          rowKey="key"
-          pagination={{ pageSize: 5 }}
-          scroll={{ x: "max-content" }}
-          style={{ overflowX: "auto" }}
-        />
-      </>
-    )
-  }
-
-  // 渲染数据列表
-  const renderDataList = () => {
-    return (
       <Table
-        columns={[
-          {
-            title: "项目名称",
-            dataIndex: "name",
-            key: "name",
-            width: "25%"
-          },
-          {
-            title: "链接",
-            dataIndex: "link",
-            key: "link",
-            width: "45%",
-            render: (text) => (
-              <a href={text} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            )
-          },
-          {
-            title: "密码",
-            dataIndex: "password",
-            key: "password",
-            width: "30%"
-          }
-        ]}
+        columns={columns}
         dataSource={config?.codeList || []}
         rowKey="key"
-        pagination={false}
-        size="small"
+        pagination={{ pageSize: 5 }}
+        scroll={{ x: "max-content" }}
+        style={{ overflowX: "auto" }}
       />
     )
   }
@@ -311,15 +272,25 @@ export default function CodeDesign() {
       key: "name",
       width: 150,
       ellipsis: true,
-      ...getColumnSearchProps("name"),
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      sortDirections: ["ascend", "descend"]
+      ...getColumnSearchProps("name")
+    },
+    {
+      title: "自动运行",
+      dataIndex: "autoRun",
+      key: "autoRun",
+      width: 100,
+      render: (text, record) => (
+        <Switch
+          checked={!!text}
+          onChange={(checked) => handleAutoRunChange(record.key, checked)}
+        />
+      )
     },
     {
       title: "链接",
       dataIndex: "link",
       key: "link",
-      width: 250,
+      width: 100,
       ellipsis: true,
       render: (text) => (
         <a href={text} target="_blank" rel="noopener noreferrer">
@@ -331,7 +302,7 @@ export default function CodeDesign() {
       title: "密码",
       dataIndex: "password",
       key: "password",
-      width: 150,
+      width: 100,
       ellipsis: true,
       render: (text) => (
         <span style={{ color: "#999" }}>{text ? text : "未设置"}</span>
@@ -367,13 +338,14 @@ export default function CodeDesign() {
       <Form.Item label="code design">
         <Space>
           <Button
-            onClick={() => loginCodeDesign()}
+            onClick={() => showModal()}
             type="primary"
             style={{
               marginBottom: 16
             }}>
-            一键登录
+            新增项目
           </Button>
+
           <Button
             onClick={toggleDataView}
             type="default"
@@ -420,6 +392,9 @@ export default function CodeDesign() {
           </Form.Item>
           <Form.Item name="password" label="密码" rules={[{ required: true }]}>
             <Input placeholder="请输入密码（可选）" />
+          </Form.Item>
+          <Form.Item name="autoRun" label="自动运行" valuePropName="checked">
+            <Switch />
           </Form.Item>
         </Form>
       </Modal>
