@@ -1,5 +1,5 @@
 import { Button, Flex, Form, Radio } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
 
@@ -8,7 +8,6 @@ import { sendMessageToContent } from "../utils"
 export default function Tool() {
   const [config, setConfig] = useStorage("config", (value) => value || {})
   const [form] = Form.useForm()
-  console.log(config, "config")
 
   // 初始化表单值
   useEffect(() => {

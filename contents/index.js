@@ -133,7 +133,6 @@ function init() {
   })
 
   const handleMessage = (data) => {
-    console.log(data, "data")
     const { environment, codeList, otherList } = data
     executeEnvironmentAction(environment)
     handleCodeDesignAutoLogin(codeList)
