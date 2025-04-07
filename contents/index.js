@@ -38,7 +38,7 @@ function init() {
   // 处理codedesign 的自动登录
   const handleCodeDesignAutoLogin = async (codeList) => {
     const currentLink = window.location.href
-    const currentItem = codeList.find((item) => currentLink.includes(item.link))
+    const currentItem = codeList?.find((item) => currentLink.includes(item.link))
     // 没有自动登录直接返回
     if (!currentItem?.autoRun) {
       return
