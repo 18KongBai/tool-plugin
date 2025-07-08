@@ -1,10 +1,14 @@
-import { Button, Flex, Form, Radio, message, Upload, Tooltip } from "antd"
+import { Button, Flex, Form, message, Radio, Tooltip, Upload } from "antd"
 import React, { useEffect, useRef } from "react"
 
-import { useStorage } from "@plasmohq/storage/hook"
 import { Storage } from "@plasmohq/storage"
+import { useStorage } from "@plasmohq/storage/hook"
 
-import { sendMessageToContent, exportPluginData, importPluginData } from "../utils"
+import {
+  exportPluginData,
+  importPluginData,
+  sendMessageToContent
+} from "../utils"
 
 export default function Tool() {
   const [config, setConfig] = useStorage("config", (value) => value || {})
@@ -93,6 +97,14 @@ export default function Tool() {
                   })
                 }}>
                 设置token
+              </Button>
+              <Button
+                onClick={() => {
+                  sendMessageToContent({
+                    type: "setCustomToken"
+                  })
+                }}>
+                自定义token
               </Button>
               <Button
                 onClick={() => sendMessageToContent({ type: "clearToken" })}>

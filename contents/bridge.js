@@ -65,6 +65,12 @@ function init() {
         })
       }
 
+      if (type === "setCustomToken") {
+        sendMessage({
+          type: "setCustomToken"
+        })
+      }
+
       if (type === "executeScript") {
         // 隔离脚本不能执行，需要发送到主世界
         if (!contentScriptLoaded) {

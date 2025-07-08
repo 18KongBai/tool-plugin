@@ -97,10 +97,11 @@ function init() {
 
   // 监听来自隔离世界的响应
   window.addEventListener("message", (event) => {
-    if (event.data.type === "STORAGE_RESULT") {
+    const { type } = event.data
+    if (type === "STORAGE_RESULT") {
       handleMessage(event?.data?.data || {})
     }
-    if (event.data.type === "clearToken") {
+    if (type === "clearToken") {
       try {
         window.JNBees.clearToken()
         showToast("移除token成功")
@@ -111,9 +112,16 @@ function init() {
         showToast("移除token失败", { type: "error" })
       }
     }
-    if (event.data.type === "setToken") {
+    if (type === "setToken" || type === "setCustomToken") {
       try {
-        window._jn._updateToken(event.data.data)
+        if (type === "setToken") {
+          window._jn._updateToken(event.data.data)
+        } else {
+          const token = window.prompt("请输入token")
+          if (token) {
+            window._jn._updateToken(token)
+          }
+        }
         showToast("设置token成功")
         setTimeout(() => {
           window.location.reload()
@@ -122,7 +130,7 @@ function init() {
         showToast(`设置token失败:${error}`, { type: "error" })
       }
     }
-    if (event.data.type === "executeScript") {
+    if (type === "executeScript") {
       const { name, code } = event.data.data
       try {
         eval(code)
