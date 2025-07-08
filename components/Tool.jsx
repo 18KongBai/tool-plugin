@@ -1,13 +1,15 @@
-import { Button, Flex, Form, Radio } from "antd"
-import React, { useEffect } from "react"
+import { Button, Flex, Form, Radio, message, Upload, Tooltip } from "antd"
+import React, { useEffect, useRef } from "react"
 
 import { useStorage } from "@plasmohq/storage/hook"
+import { Storage } from "@plasmohq/storage"
 
-import { sendMessageToContent } from "../utils"
+import { sendMessageToContent, exportPluginData, importPluginData } from "../utils"
 
 export default function Tool() {
   const [config, setConfig] = useStorage("config", (value) => value || {})
   const [form] = Form.useForm()
+  const storage = new Storage()
 
   // 初始化表单值
   useEffect(() => {
@@ -24,6 +26,35 @@ export default function Tool() {
       ...config,
       ...allValues
     })
+  }
+
+  // 处理数据导出
+  const handleExportData = async () => {
+    try {
+      const result = await exportPluginData(storage)
+      if (result.success) {
+        message.success(result.message)
+      } else {
+        message.error(result.message)
+      }
+    } catch (error) {
+      message.error("导出失败：" + error.message)
+    }
+  }
+
+  // 处理数据导入
+  const handleImportData = async (file) => {
+    try {
+      const result = await importPluginData(file, storage, setConfig)
+      if (result.success) {
+        message.success(result.message)
+      } else {
+        message.error(result.message)
+      }
+    } catch (error) {
+      message.error("导入失败：" + error.message)
+    }
+    return false // 阻止Upload组件的默认上传行为
   }
 
   const renderSelectEnvironment = () => {
@@ -67,6 +98,23 @@ export default function Tool() {
                 onClick={() => sendMessageToContent({ type: "clearToken" })}>
                 清空token
               </Button>
+            </Flex>
+          </Form.Item>
+          <Form.Item label="数据管理">
+            <Flex gap="small" wrap>
+              <Tooltip title="导出自定义脚本和项目配置数据，保存为JSON文件">
+                <Button type="primary" onClick={handleExportData}>
+                  导出数据
+                </Button>
+              </Tooltip>
+              <Upload
+                accept=".json"
+                showUploadList={false}
+                beforeUpload={handleImportData}>
+                <Tooltip title="从之前导出的JSON文件中增量导入脚本和项目数据，同名项目不会重复添加">
+                  <Button>导入数据</Button>
+                </Tooltip>
+              </Upload>
             </Flex>
           </Form.Item>
         </Form>
