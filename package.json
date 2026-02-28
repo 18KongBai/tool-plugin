@@ -14,6 +14,7 @@
     "@plasmohq/storage": "^1.15.0",
     "antd": "^5.24.6",
     "antd-mobile": "^5.39.0",
+    "jszip": "^3.10.1",
     "plasmo": "0.90.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -33,7 +34,9 @@
       "http://*/*"
     ],
     "permissions": [
-      "scripting"
+      "scripting",
+      "storage",
+      "activeTab"
     ]
   }
 }

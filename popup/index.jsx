@@ -13,7 +13,7 @@ function IndexPopup() {
     },
     {
       key: "2",
-      label: "快捷登录",
+      label: "脚本工具",
       children: <QuickLogin />
     }
   ]

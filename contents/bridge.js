@@ -46,9 +46,22 @@ function init() {
           const tokenIndex = tokenArr.findIndex((item) => {
             return item.includes("INIU_DATA_PRODUCT_CMS_TOKEN")
           })
-          token = tokenArr[tokenIndex].split("=")[1]
+          const token = tokenArr[tokenIndex].split("=")[1]
           storage.set("token", token)
-          showToast("获取token成功")
+          try {
+            const textarea = document.createElement("textarea")
+            textarea.value = token
+            textarea.style.position = "fixed"
+            textarea.style.opacity = "0"
+            document.body.appendChild(textarea)
+            textarea.select()
+            document.execCommand("copy")
+            document.body.removeChild(textarea)
+          } catch (err) {
+            console.log("复制token失败:", err)
+          }
+
+          showToast("获取并复制token成功")
         } catch (error) {
           showToast("获取token失败", { type: "error" })
         }
